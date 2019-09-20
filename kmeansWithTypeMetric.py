@@ -5,19 +5,18 @@ Created on Mon Sep  9 13:43:12 2019
 @author: Przemek
 """
 
+#import pathlib
+#-------------------------------------------------------------------
 from pyclustering.cluster.kmeans import kmeans
 from pyclustering.utils.metric import type_metric, distance_metric
-import pathlib
+from pyclustering.samples.definitions import FCPS_SAMPLES
+from pyclustering.utils import read_sample
+#-------------------------------------------------------------------
 
-path = pathlib.Path('C:\\Users\Przemek\Desktop\sample.txt')
-content = ""
-if path.is_file():
-    in_file = open(path, 'r')
-    content = in_file.read()
+sample = read_sample(FCPS_SAMPLES.SAMPLE_TWO_DIAMONDS)
 
 user_function = lambda point1, point2: point1[0] + point2[0] + 2
 metric = distance_metric(type_metric.CHEBYSHEV, func=user_function)
-sample = read_sample()
 
 # create K-Means algorithm with specific distance metric
 start_centers = [[0.0, 0.1], [0.4, 0.1]];

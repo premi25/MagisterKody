@@ -13,7 +13,6 @@ path = pathlib.Path('C:\\Users\Przemek\Desktop\household_power_consumption.txt')
 #----------------------------------------------------------------------
 def listOfItemsSplitted(item,character):
     workList = str(item).split(character)
-
     return workList
 
 def removeEmpty(List):
@@ -28,7 +27,7 @@ def removeObjectsWithMissingValues(ListOfLists, character='?'):
     for i in ListOfLists:
         if not character in i:
             listOfNonmissingValuesObjects.append(i)
-            
+
     return listOfNonmissingValuesObjects
 
 def removeStringsWithMissingValues(List, character='?'):
@@ -36,7 +35,7 @@ def removeStringsWithMissingValues(List, character='?'):
     for i in List:
         if not character in i:
             listOfNonmissingValuesObjects.append(i)
-            
+
     return listOfNonmissingValuesObjects
 
 def removeEmptyItems(List):
@@ -47,6 +46,7 @@ def removeEmptyItems(List):
 
     return listWithoutEmptyItems
 
+"""
 def transformListToDictionary(listToTransformation):
     objectsWithoutDelimitersAndMissingValues = []
     objectsWithoutEmptyItems = []
@@ -59,10 +59,10 @@ def transformListToDictionary(listToTransformation):
     objectsWithoutDelimitersAndMissingValues = clearListAndAssignParameter(objectsWithoutEmptyItems, objectsWithoutDelimitersAndMissingValues)
 
     listToTransformation = clearListAndAssignParameter(objectsWithoutDelimitersAndMissingValues, listToTransformation)
-    
+
     for item in listToTransformation:
         objectsWithoutDelimitersAndMissingValues.append(listOfItemsSplitted(item, ';'))
-    
+
     listToTransformation = clearListAndAssignParameter(objectsWithoutDelimitersAndMissingValues, listToTransformation)
 
     for item in objectsWithoutDelimitersAndMissingValues:
@@ -76,3 +76,5 @@ def clearListAndAssignParameter(listToClear, listToAssign):
     listToAssign = list(listToClear)
     listToClear.clear()
     return listToAssign
+
+"""
