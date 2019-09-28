@@ -11,6 +11,7 @@ import numpy as np
 #-------------------------------------------------------------------
 #from pyclustering.cluster import cluster_visualizer_multidim
 from pyclustering.cluster.center_initializer import kmeans_plusplus_initializer as kppi
+from pyclustering.cluster.center_initializer import random_center_initializer  as rci
 from pyclustering.cluster.elbow import elbow
 from pyclustering.cluster.kmeans import kmeans
 from pyclustering.cluster.silhouette import silhouette
@@ -36,7 +37,8 @@ metric = distance_metric(type_metric.EUCLIDEAN)
 def kmeansWithScores(nameData, nameSilhouetteMean, nameDBS, nameCHS, k_clusters, measure, kmin, kmax):
     data = read_sample(str(root)+'\\'+nameData)
 
-    initial_centers = kppi(data, k_clusters).initialize()
+    #initial_centers = kppi(data, k_clusters).initialize()
+    initial_centers = rci(data, k_clusters).initialize()
     kmeans_instance = kmeans(data, initial_centers, metric = measure)
 
     kmeans_instance.process()
