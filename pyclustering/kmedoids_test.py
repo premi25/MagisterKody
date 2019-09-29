@@ -11,7 +11,7 @@ import numpy as np
 import random
 #-------------------------------------------------------------------
 
-from pyclustering.cluster.elbow import elbow
+#from pyclustering.cluster.elbow import elbow
 from pyclustering.cluster.kmedoids import kmedoids
 from pyclustering.cluster.silhouette import silhouette
 from pyclustering.utils import read_sample
@@ -65,9 +65,9 @@ def kmedoidsWithScore(nameData, nameSilhouetteMean, nameDBS, nameCHS, k_clusters
     chsScore = chs(data, predicted)
     #witCSV(chsScore, nameCHS, '', root)
 
-    elbow_instance = elbow(data, kmin, kmax)
-    elbow_instance.process()
-    amount_clusters = elbow_instance.get_amount()  # most probable amount of clusters
-    wce = elbow_instance.get_wce()
+   # elbow_instance = elbow(data, kmin, kmax)
+   # elbow_instance.process()
+   # amount_clusters = elbow_instance.get_amount()  # most probable amount of clusters
+   # wce = elbow_instance.get_wce()
 
 kmedoidsWithScore(filenameData, filenameSilhouetteMean, filenameDBS, filenameCHS, k, metric, k_min, k_max)

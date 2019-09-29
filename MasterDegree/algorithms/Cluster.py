@@ -1,13 +1,15 @@
-import dataPoint
+from DataPointClass import DataPoint
 
 class Cluster:
-    _center = dataPoint()
-    _oldCenter = dataPoint()
-    _observations = [dataPoint()]
     
-    def __init__(self, _center, observations):
-       self._center = _center
-       self._observations = observations
+    oldCenter = DataPoint("")
+
+
+    def __init__(self, id, center):
+        self._id = id
+        self._center = center
+        self._oldCenter = center
+        self._observations = []
     
     def __repr__(self):
        return repr(self.value)
@@ -16,23 +18,35 @@ class Cluster:
         if isinstance(item, (int, slice)):
             return self.__class__(self.value[item])
         return [self.value[i] for i in item]
-    
+        
+    def appendObservation(self, observation):
+        point = DataPoint(observation)
+        if not point in self._observations:
+            self._observations.append(point)
+
     def updateClusterCenterByMean(self):
-        sumOfDimension = 0
         dimension = 0
-        dimensionsAmount = self._center.getDimensionsAmount()
+        dimensionsAmount = len(self._center)
         while dimension < dimensionsAmount:
+            sumOfDimension = 0
             for observation in self._observations:
-                sumOfDimension += observation.getValue()
+                sumOfDimension += observation.getValue(dimension)
                 
-            mean = sumOfDimension/dimensionsAmount
+            observationsAmount = self.getObservationsAmount()
+            mean = round(sumOfDimension/observationsAmount, 5)
             self._center[dimension] = mean
             
             dimension += 1
+        
+        self.clearstaticOldCenter()
 
-    def assignOldCenter(self):
-        self._oldCenter = self._center
-                
+    def clearstaticOldCenter(self):
+        self.oldCenter = DataPoint("")
+
+    def assignOldCenter(self, center):
+        self.oldCenter = center
+        self._oldCenter = DataPoint(self.oldCenter)
+
     def checkIfClusterChanged(self):
         if self._center == self._oldCenter:
             return False
@@ -40,15 +54,18 @@ class Cluster:
                 
     def getCenter(self):
         return self._center
-    
-    def appendObservation(self, observation):
-        if not observation in self._observations:
-            self._observations.append(observation)
+
             
     def removeObservation(self, observation):
+        point = DataPoint(observation)
         if observation in self._observations:
             self._observations.remove(observation)
             
     def getObservations(self):
         return self._observations
-        
+
+    def clearObservations(self):
+        self._observations.clear()
+
+    def getObservationsAmount(self):
+        return len(self._observations)

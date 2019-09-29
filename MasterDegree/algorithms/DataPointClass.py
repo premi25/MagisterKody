@@ -1,9 +1,9 @@
 class DataPoint:
     
-    _values = []
+    #_values = []
     
     def __init__(self, value):
-       self._values = value
+       self.value = value
     
     def __repr__(self):
        return repr(self.value)
@@ -14,7 +14,7 @@ class DataPoint:
         return [self.value[i] for i in item]
     
     def getValue(self, dimensionId):
-        return self._values[dimensionId]
+        return self.value[dimensionId]
     
     def getDimensionsAmount(self):
-        return len(self._values)
+        return len(self.value)

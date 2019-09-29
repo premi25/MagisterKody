@@ -1,6 +1,6 @@
-import calculateChebyshev
-import calculateEuclidean
-import calculateManhattan
+from chebyshev_metric import calculateChebyshev
+from euclidean_metric import calculateEuclidean
+from manhattan_metric import calculateManhattan
 
 
 class CallMetric:
