@@ -16,16 +16,16 @@ from operationsOnFile import writeItemToTxtWithDateTime as witTXT
 from sklearn.metrics import davies_bouldin_score as dbs
 from sklearn.metrics import calinski_harabasz_score as chs
 
-root = pathlib.Path('F:\\US_18_19\PracaMag\Data\Research')
-fileData100thousand = 'dataForResearch100thousand.txt'
-fileData75thousand = 'dataForResearch75thousand.txt'
-fileData50thousand = 'dataForResearch50thousand.txt'
-fileData20thousand = 'dataForResearch20thousand.txt'
-fileData10thousand = 'dataForResearch10thousand.txt'
-fileSilhMean = 'silhouette_mean.csv'
-fileDBS = 'dbsMeans.csv'
-fileCHS = 'chsMeans.csv'
-metricResearch = distance_metric(type_metric.EUCLIDEAN)
+root = pathlib.Path('C:\\Users\Szatan_Domowy\Desktop\Praca_mag\Dane\Research')
+fileData100thousand = '100thousand.txt'
+fileData75thousand = '75thousand.txt'
+fileData50thousand = '50thousand.txt'
+fileData20thousand = '20thousand.txt'
+fileData10thousand = '10thousand.txt'
+fileSilhMean = 'silhouette_mean'
+fileDBS = 'dbsMeans'
+fileCHS = 'chsMeans'
+metricResearch = distance_metric(type_metric.CHEBYSHEV)
 kminimum = 1
 kmaximum = 10
 
@@ -44,16 +44,16 @@ def kmeansWithScores(filenameData, filenameSilhMean, filenameDBS, filenameCHS, k
 
     silhouetteScore = silhouette(data, clusters).process().get_score()
     meanSilhouetteScore = np.mean(silhouetteScore)
-    witCSV(meanSilhouetteScore, filenameSilhMean, '', root)
+    witTXT(meanSilhouetteScore, filenameSilhMean, filepath = root, note = filenameData + " k: "+ str(kClusters))
 
     dbsScore = dbs(data, predicted)
-    witCSV(dbsScore, filenameDBS, '', root)
-
+    witTXT(dbsScore, filenameDBS, filepath = root, note = filenameData + " k: "+ str(kClusters))
+	
     chsScore = chs(data, predicted)
-    witCSV(chsScore, filenameCHS, '', root)
+    witTXT(chsScore, filenameCHS, filepath = root, note = filenameData + " k: "+ str(kClusters))
 
-#kmeansWithScores(fileData100thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
-#kmeansWithScores(fileData75thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
-#kmeansWithScores(fileData50thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
-#kmeansWithScores(fileData20thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
-#kmeansWithScores(fileData10thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
+kmeansWithScores(fileData100thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
+kmeansWithScores(fileData75thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
+kmeansWithScores(fileData50thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
+kmeansWithScores(fileData20thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
+kmeansWithScores(fileData10thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)

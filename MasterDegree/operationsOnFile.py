@@ -4,7 +4,7 @@ from datetime import datetime
 #----------------------------------------------------------------
 path = pathlib.Path('C:\\')
 #----------------------------------------------------------------
-dt = datetime.now()
+dt = datetime.datetime
 #----------------------------------------------------------------
 def addExtensionToFilename(name, extension):
     if not extension in name:
@@ -20,7 +20,6 @@ def listOfFileLines(filepath):
         return lines
     except IOError:
         raise IOError("Reading error")
-        return False
         
 def mergePathOfFile(filepath, filename):
     return pathlib.Path(str(filepath)+'\\'+filename)
@@ -35,7 +34,6 @@ def writeItemToCSV(item, filename, delimiter=',', filepath=path, accessmode='a')
         return True
     except IOError:
         raise IOError("Writing error")
-        return False
         
 
 def writeListItemsToCSV(List, filename, delimiter=',', filepath=path, accessmode='a'):
@@ -52,19 +50,18 @@ def writeListItemsToCSV(List, filename, delimiter=',', filepath=path, accessmode
         return True
     except IOError:
         raise IOError("Writing error")
-        return False
     
-def writeItemToTxtWithDateTime(item, filename, delimiter=' ', filepath=path, accessmode='a'):
+def writeItemToTxtWithDateTime(item, filename, delimiter=' ', filepath=path, accessmode='a', note=''):
     filename = addExtensionToFilename(filename, '.txt')
 	
     try:
         with open (mergePathOfFile(filepath, filename), accessmode) as f:
-            f.write(str(dt)+delimiter+str(item)+delimiter)
+            line = str(dt.now().strftime("%Y-%m-%D %H:%M:%S")) + delimiter + note + delimiter + str(item) + delimiter
+            f.write(line)
             f.write('\n')
         return True
     except IOError:
         raise IOError("Writing error")
-        return False
     
 """def writeListItemsToTxtWithDateTime(List, filename, delimiter=' ', filepath=path, accessmode='a'):
     filename = addExtensionToFilename(filename, '.txt')
