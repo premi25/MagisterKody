@@ -29,42 +29,31 @@ metricResearch = distance_metric(type_metric.EUCLIDEAN)
 kminimum = 1
 kmaximum = 10
 
-def initialSetOfMedoids(k_clusters, points_amount):
-    medoidsToInit = []
-    while len(medoidsToInit) < k_clusters:
-        number = random.randrange(0, points_amount)
-        if not number in medoidsToInit:
-            medoidsToInit.append(number)
 
-    return medoidsToInit
-
-
-def kmedoidsWithScore(nameData, nameSilhouetteMean, nameDBS, nameCHS, k_clusters, measure, kmin, kmax):
+def kmedoidsWithScores(nameData, nameSilhouetteMean, nameDBS, nameCHS, k_clusters, measure, kmin, kmax):
 	data = read_sample(str(root)+'\\'+filenameData)
     
     kClusters = canoc(data, kmin, kmax)
     
     initial_medoids = rci(data, kClusters).initialize()
-
-    kmedoids_instance = kmedoids(data, initial_medoids)
+    kmedoids_instance = kmedoids(data, initial_medoids, metric = metricResearch)
+	
     kmedoids_instance.process()
     clusters = kmedoids_instance.get_clusters()
     predicted = kmedoids_instance.predict(data)
 
-    silhouetteScore = silhouette(data, clusters).process().get_score()
+	silhouetteScore = silhouette(data, clusters).process().get_score()
     meanSilhouetteScore = np.mean(silhouetteScore)
-    #wlitCSV(silhouetteScore, filenameSilhouette, '', root)
-    #witCSV(meanSilhouetteScore, nameSilhouetteMean, '', root)
+    witTXT(meanSilhouetteScore, filenameSilhMean, filepath = root, note = filenameData + " k: "+ str(kClusters))
 
     dbsScore = dbs(data, predicted)
-    #witCSV(dbsScore, nameDBS, '', root)
-
+    witTXT(dbsScore, filenameDBS, filepath = root, note = filenameData + " k: "+ str(kClusters))
+	
     chsScore = chs(data, predicted)
-    #witCSV(chsScore, nameCHS, '', root)
+    witTXT(chsScore, filenameCHS, filepath = root, note = filenameData + " k: "+ str(kClusters))
 
-   # elbow_instance = elbow(data, kmin, kmax)
-   # elbow_instance.process()
-   # amount_clusters = elbow_instance.get_amount()  # most probable amount of clusters
-   # wce = elbow_instance.get_wce()
-
-kmedoidsWithScore(filenameData, filenameSilhouetteMean, filenameDBS, filenameCHS, k, metric, k_min, k_max)
+kmedoidsWithScores(fileData100thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
+kmedoidsWithScores(fileData75thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
+kmedoidsWithScores(fileData50thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
+kmedoidsWithScores(fileData20thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
+kmedoidsWithScores(fileData10thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
