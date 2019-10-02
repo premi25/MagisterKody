@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Sep 20 12:09:16 2019
-
-@author: Przemek
-"""
-
 import pathlib
 #-------------------------------------------------------------------
 import numpy as np
