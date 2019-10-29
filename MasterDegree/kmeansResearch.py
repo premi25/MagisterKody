@@ -1,16 +1,12 @@
 import pathlib
 #-------------------------------------------------------------------
-import numpy as np
+from meanSilh import meanSilh
 #-------------------------------------------------------------------
-from calculateAppropriateK import calculateAppropriateNumberOfClusters as canoc
+from kmeansRun import kmeansRun
 #-------------------------------------------------------------------
-from pyclustering.cluster.center_initializer import random_center_initializer as rci
-from pyclustering.cluster.kmeans import kmeans
-from pyclustering.cluster.silhouette import silhouette
 from pyclustering.utils import read_sample
-from pyclustering.utils.metric import type_metric, distance_metric
+from pyclustering.utils.metric import type_metric
 #-------------------------------------------------------------------
-#from operationsOnFile import writeItemToCSV as witCSV
 from operationsOnFile import writeItemToTxtWithDateTime as witTXT
 #-------------------------------------------------------------------
 from sklearn.metrics import davies_bouldin_score as dbs
@@ -22,38 +18,35 @@ fileData75thousand = '75thousand.txt'
 fileData50thousand = '50thousand.txt'
 fileData20thousand = '20thousand.txt'
 fileData10thousand = '10thousand.txt'
-fileSilhMean = 'silhouette_mean'
-fileDBS = 'dbsMedians'
-fileCHS = 'chsMedians'
-metricResearch = distance_metric(type_metric.EUCLIDEAN)
-kminimum = 1
-kmaximum = 10
+fileSilh = 'silhouetteMeans'
+fileDBS = 'dbsMeans'
+fileCHS = 'chsMeans'
+i = 0
 
 
-def kmeansWithScores(filenameData, filenameSilhMean, filenameDBS, filenameCHS, kmin, kmax):
-    data = read_sample(str(root)+'\\'+filenameData)
+def kmeansWithScores(filenameData, filenameSilhMean, nameDBS, nameCHS, kClusters, measure):
+    path = pathlib.Path(str(root)+'\\'+filenameData)
+    if path.is_file():
+        data = read_sample(path)
     
-    kClusters = canoc(data, kmin, kmax)
-    
-    initial_centers = rci(data, kClusters).initialize()
-    kmeans_instance = kmeans(data, initial_centers, metric = metricResearch)
+        clusters, predicted = kmeansRun(data, kClusters, measure)
 
-    kmeans_instance.process()
-    clusters = kmeans_instance.get_clusters()
-    predicted = kmeans_instance.predict(data)
+        meanSilhouetteScore = meanSilh(data, clusters)
+        witTXT(meanSilhouetteScore, filenameSilhMean, filepath = root, note = filenameData + " k: " + str(kClusters))
 
-    silhouetteScore = silhouette(data, clusters).process().get_score()
-    meanSilhouetteScore = np.mean(silhouetteScore)
-    witTXT(meanSilhouetteScore, filenameSilhMean, '', root)
+        dbsScore = dbs(data, predicted)
+        witTXT(dbsScore, nameDBS, filepath = root, note = filenameData + " k: "+ str(kClusters))
 
-    dbsScore = dbs(data, predicted)
-    witTXT(dbsScore, filenameDBS, '', root)
+        chsScore = chs(data, predicted)
+        witTXT(chsScore, nameCHS, filepath = root, note = filenameData + " k: "+ str(kClusters))
 
-    chsScore = chs(data, predicted)
-    witTXT(chsScore, filenameCHS, '', root)
-
-#kmeansWithScores(fileData100thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
-#kmeansWithScores(fileData75thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
-#kmeansWithScores(fileData50thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
-#kmeansWithScores(fileData20thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
-#kmeansWithScores(fileData10thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
+while i < 4:
+    kmeansWithScores(fileData100thousand, fileSilh, fileDBS, fileCHS, 25, type_metric(i))
+    kmeansWithScores(fileData75thousand, fileSilh, fileDBS, fileCHS, 22, type_metric(i))
+    kmeansWithScores(fileData50thousand, fileSilh, fileDBS, fileCHS, 20, type_metric(i))
+    kmeansWithScores(fileData20thousand, fileSilh, fileDBS, fileCHS, 15, type_metric(i))
+    kmeansWithScores(fileData10thousand, fileSilh, fileDBS, fileCHS, 10, type_metric(i))
+    if i == 0:
+        i += 2
+    else:
+        i += 1

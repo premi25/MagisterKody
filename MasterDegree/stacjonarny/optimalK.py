@@ -15,8 +15,6 @@ fileSilhMean = 'silhouetteMedoids'
 fileDBS = 'dbsMedoids'
 fileCHS = 'chsMedoids'
 metricResearch = distance_metric(type_metric.EUCLIDEAN)
-#kminimum = 1
-#kmaximum = 10
 
 
 def optimalKNumbers(filenameData, filepath, kmin, kmax):

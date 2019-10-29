@@ -1,16 +1,12 @@
 import pathlib
 #-------------------------------------------------------------------
-import numpy as np
+from meanSilh import meanSilh
 #-------------------------------------------------------------------
-from calculateAppropriateK import calculateAppropriateNumberOfClusters as canoc
+from kmediansRun import kmediansRun
 #-------------------------------------------------------------------
-from pyclustering.cluster.center_initializer import random_center_initializer as rci
-from pyclustering.cluster.kmedians import kmedians
-from pyclustering.cluster.silhouette import silhouette
 from pyclustering.utils import read_sample
-from pyclustering.utils.metric import type_metric, distance_metric
+from pyclustering.utils.metric import type_metric
 #-------------------------------------------------------------------
-#from operationsOnFile import writeItemToCSV as witCSV
 from operationsOnFile import writeItemToTxtWithDateTime as witTXT
 #-------------------------------------------------------------------
 from sklearn.metrics import davies_bouldin_score as dbs
@@ -22,38 +18,35 @@ fileData75thousand = '75thousand.txt'
 fileData50thousand = '50thousand.txt'
 fileData20thousand = '20thousand.txt'
 fileData10thousand = '10thousand.txt'
-fileSilhMean = 'silhouette_mean'
+fileSilh = 'silhouetteMedians'
 fileDBS = 'dbsMedians'
 fileCHS = 'chsMedians'
-metricResearch = distance_metric(type_metric.CHEBYSHEV)
-kminimum = 1
-kmaximum = 10
+i = 0
 
 
-def kmediansWithScores(nameData, nameSilhouetteMean, nameDBS, nameCHS, k_clusters, measure, kmin, kmax):
-	data = read_sample(str(root)+'\\'+filenameData)
+def kmediansWithScores(filenameData, filenameSilhMean, nameDBS, nameCHS, kClusters, measure):
+    path = pathlib.Path(str(root)+'\\'+filenameData)
+    if path.is_file():
+        data = read_sample(path)
     
-    kClusters = canoc(data, kmin, kmax)
+        clusters, predicted = kmediansRun(data, kClusters, measure)
     
-    initial_medians = rci(data, kClusters).initialize()
-    kmedians_instance = kmedians(data, initial_medians, metric = metricResearch)
+        meanSilhouetteScore = meanSilh(data, clusters)
+        witTXT(meanSilhouetteScore, filenameSilhMean, filepath = root, note = filenameData + " k: " + str(kClusters))
+
+        dbsScore = dbs(data, predicted)
+        witTXT(dbsScore, nameDBS, filepath = root, note = filenameData + " k: " + str(kClusters))
 	
-    kmedians_instance.process()
-    clusters = kmedians_instance.get_clusters()
-    predicted = kmedians_instance.predict(data)
+        chsScore = chs(data, predicted)
+        witTXT(chsScore, nameCHS, filepath = root, note = filenameData + " k: " + str(kClusters))
 
-    silhouetteScore = silhouette(data, clusters).process().get_score()
-    meanSilhouetteScore = np.mean(silhouetteScore)
-    witTXT(meanSilhouetteScore, filenameSilhMean, filepath = root, note = filenameData + " k: "+ str(kClusters))
-
-    dbsScore = dbs(data, predicted)
-    witTXT(dbsScore, filenameDBS, filepath = root, note = filenameData + " k: "+ str(kClusters))
-	
-    chsScore = chs(data, predicted)
-    witTXT(chsScore, filenameCHS, filepath = root, note = filenameData + " k: "+ str(kClusters))
-
-kmediansWithScores(fileData100thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
-kmediansWithScores(fileData75thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
-kmediansWithScores(fileData50thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
-kmediansWithScores(fileData20thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
-kmediansWithScores(fileData10thousand, fileSilhMean, fileDBS, fileCHS, kminimum, kmaximum)
+while i < 4:
+    kmediansWithScores(fileData100thousand, fileSilh, fileDBS, fileCHS, 25, type_metric(i))
+    kmediansWithScores(fileData75thousand, fileSilh, fileDBS, fileCHS, 22, type_metric(i))
+    kmediansWithScores(fileData50thousand, fileSilh, fileDBS, fileCHS, 20, type_metric(i))
+    kmediansWithScores(fileData20thousand, fileSilh, fileDBS, fileCHS, 15, type_metric(i))
+    kmediansWithScores(fileData10thousand, fileSilh, fileDBS, fileCHS, 10, type_metric(i))
+    if i == 0:
+        i += 2
+    else:
+        i += 1
